@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import mesa
+import matplotlib.pyplot as plt
 
 # 1) create agent
 class money_agent(mesa.Agent):
@@ -16,6 +17,13 @@ class money_agent(mesa.Agent):
     def say_wealth(self):
         print(f"Hello, i'm agent n°{self.unique_id}  and i'm broke!")
         
+    def exchange(self):
+        if self.wealth > 0:
+            other_agent = self.random.choice(self.model.agents)
+            if other_agent is not None:
+                other_agent.wealth += 1
+                self.wealth -= 1
+        
 # 2) create model: the list of agents
 class money_model(mesa.Model):
     
@@ -29,8 +37,25 @@ class money_model(mesa.Model):
         
     # 3)
     def step(self):
-        self.agents.shuffle_do("say_wealth")
+        self.agents.shuffle_do("exchange")
         
+# 4) execute and visualize data
+all_wealth = []
+# This runs the model 100 times, each model executing 30 steps.
+for _ in range(100):
+    # Run the model
+    model = money_model(10)
+    for _ in range(30):
+        model.step()
 
-starter_model = money_model(10)
-starter_model.step()
+    # Store the results
+    for agent in model.agents:
+        all_wealth.append(agent.wealth)
+
+# Use seaborn
+g = sns.histplot(all_wealth, discrete=True)
+g.set(title="Wealth distribution", xlabel="Wealth", ylabel="number of agents");
+
+# DL plot
+plt.savefig("wealth_distribution.png")
+plt.show()
