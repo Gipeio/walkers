@@ -52,7 +52,7 @@ for _ in range(100):
     for agent in model.agents:
         all_wealth.append(agent.wealth)
 
-# Use seaborn
+# Use seaborn to create plot
 g = sns.histplot(all_wealth, discrete=True)
 g.set(title="Wealth distribution", xlabel="Wealth", ylabel="number of agents");
 
