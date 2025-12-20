@@ -32,8 +32,7 @@ class money_model(mesa.Model):
         super().__init__(seed=seed)
         self.num_agents = n
         # Create Agents
-        for _ in range(n):
-            money_agent(self)
+        money_agent.create_agents(model=self, n=10)
         
     # 3)
     def step(self):
