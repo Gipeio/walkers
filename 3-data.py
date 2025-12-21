@@ -55,11 +55,49 @@ class money_model(mesa.Model):
         self.agents.do("exchange")
         
 model = money_model(100,10,10)
-for _ in range(100):
+for _ in range(20):
     model.step()
+    
+agent_wealth = model.datacollector.get_agent_vars_dataframe()
+print(agent_wealth.head)
 
-gini = model.datacollector.get_model_vars_dataframe()
-g = sns.lineplot(data=gini)
-g.set(title="Gini Coefficient over Time", ylabel="Gini Coefficient")
+### PLOTS
+
+# # GINI
+
+# # gini = model.datacollector.get_model_vars_dataframe()
+# # g = sns.lineplot(data=gini)
+# # g.set(title="Gini Coefficient over Time", ylabel="Gini Coefficient")
+
+# # WEALTH REPARTITION AT THE END OF THE SIMULATION
+
+# last_step = agent_wealth.index.get_level_values("Step").max()
+# end_wealth = agent_wealth.xs(last_step, level="Step")[
+#     "Wealth"
+# ]
+# g = sns.histplot(end_wealth, discrete=True)
+# g.set(
+#     title="Distribution of wealth at the end of simulation",
+#     xlabel="Wealth",
+#     ylabel="number of agents",
+# )
+
+# # WEALTH OF A GIVEN AGENT
+
+# one_agent_wealth = agent_wealth.xs(54, level="AgentID")
+
+# g = sns.lineplot(data=one_agent_wealth, x="Step", y="Wealth")
+# g.set(title="Wealth of specified agent over time")
+
+# WEALTH OF MULTIPLE GIVEN AGENTS
+
+agent_list = [3, 47, 89]
+
+multiple_agent_wealth = agent_wealth[
+    agent_wealth.index.get_level_values("AgentID").isin(agent_list)
+]
+
+g = sns.lineplot(data=multiple_agent_wealth, x="Step", y="Wealth", hue="AgentID")
+g.set(title="Wealth of specified agents over time")
 
 plt.show()
